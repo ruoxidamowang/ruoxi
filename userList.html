@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>用户列表</title>
+		<script src="js/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/vue-router.js" type="text/javascript" charset="utf-8"></script>
+		<style type="text/css">
+			* {
+				padding: 0;
+				margin: 0;
+			}
+
+			body {
+				background-color: #fff;
+			}
+
+			.inputs {
+				padding-top: 12px;
+			}
+
+			.inputs input {
+				font-size: 0.875rem;
+				width: 150px;
+				height: 32px;
+				background: rgba(255, 255, 255, 0.2);
+				border: 1px solid black;
+			}
+
+			tr:hover {
+				background-color: cornflowerblue;
+				transition: all 0.8s ease;
+			}
+
+			.v-enter,
+			.v-leave-to {
+				opacity: 0;
+				transform: translateY(80px);
+			}
+
+			.v-enter-active,
+			.v-leave-active {
+				transition: all 0.6s ease;
+			}
+
+			.v-move {
+				transition: all 0.6s ease;
+			}
+
+			.v-leave-active {
+				position: absolute;
+			}
+
+			.tables {
+				text-align: center;
+				width: 90%;
+				margin: 20px auto;
+			}
+
+			.tr {
+				width: 100%;
+				height: 40px;
+				line-height: 40px;
+			}
+
+			.tr:nth-child(even) {
+				background-color: #55ffff;
+			}
+
+			.firstTr {
+				background-color: #38a8a8 !important;
+			}
+
+			.td {
+				box-sizing: border-box;
+				border: 1px solid black;
+				width: 16.66%;
+				height: 40px;
+				float: left;
+			}
+
+			a {
+				text-decoration: none;
+				color: red;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<div id="add" align="center" class="inputs">
+				<label>员工编号</label>
+				<input type="text" name="" id="" value="" v-model="id" />
+				<label>员工名称</label>
+				<input type="text" name="" id="" value="" v-model="name" />
+				<label>员工性别</label>
+				<input type="text" name="" id="" value="" v-model="sex" />
+				<label>入职时间</label>
+				<input type="text" name="" id="" value="" v-model="time" />
+				<label>员工职位</label>
+				<input type="text" name="" id="" value="" v-model="position" />
+				<button @click="add">添加</button>
+				<label>搜索员工名称</label>
+				<input type="text" name="" id="" value="" v-model="sname" />
+				<a href="orderList.html" style="color: darkcyan;text-decoration:  underline;">产品中心</a>
+			</div>
+			<div class="tables">
+				<div class="tr firstTr">
+					<div class="td">员工编号</div>
+					<div class="td">员工名称</div>
+					<div class="td">员工性别</div>
+					<div class="td">入职时间</div>
+					<div class="td">员工职位</div>
+					<div class="td">操作</div>
+				</div>
+				<transition-group appear>
+					<div v-for="item in search(sname)" :key="item.id" class="tr">
+						<div class="td">{{item.id}}</div>
+						<div class="td" v-text="item.name"></div>
+						<div class="td">{{item.sex}}</div>
+						<div class="td">{{item.time|dateFormat}}</div>
+						<div class="td">{{item.position}}</div>
+						<div class="td"><a href="" @click.prevent="del(item.id)">删除</a></div>
+					</div>
+				</transition-group>
+			</div>
+		</div>
+		<script type="text/javascript">
+			Vue.filter('dateFormat', function() {
+				let date = new Date()
+				let y = date.getFullYear()
+				let m = date.getMonth() + 1
+				let d = date.getDate()
+				let hh = date.getHours()
+				let mm = date.getMinutes()
+				let ss = date.getSeconds()
+				return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
+			})
+
+			let vm = new Vue({
+				el: '#app',
+				data: {
+					id: '',
+					name: '',
+					sex: '',
+					time: '',
+					keywords: '',
+					sname: '',
+					position: '',
+					list: [{
+							id: 1,
+							name: '荆轲',
+							sex: '女',
+							position: '组长'
+						},
+						{
+							id: 2,
+							name: '程咬金',
+							sex: '男',
+							position: '秘书'
+						},
+						{
+							id: 3,
+							name: '凯',
+							sex: '男',
+							position: '长城守卫军'
+						}
+					]
+				},
+				methods: {
+					add() {
+						let people = {
+							id: this.id,
+							name: this.name,
+							sex: this.sex,
+							time: this.time,
+							position: this.position
+						}
+						this.list.push(people)
+					},
+					del(id) {
+						this.list.some((item, i) => {
+							if (item.id == id) {
+								this.list.splice(i, 1)
+								return true;
+							}
+						})
+					},
+					search(sname) {
+						let newList = []
+						this.list.forEach(item => {
+							if (item.name.indexOf(sname) != -1) {
+								newList.push(item)
+							}
+						})
+						return newList;
+					}
+				}
+			})
+		</script>
+	</body>
+</html>

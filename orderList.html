@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>订单列表</title>
+		<script src="js/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/vue-router.js" type="text/javascript" charset="utf-8"></script>
+		<style type="text/css">
+			* {
+				padding: 0;
+				margin: 0;
+			}
+
+			body {
+				background-color: #fff;
+			}
+
+			.inputs {
+				padding-top: 12px;
+			}
+
+			.inputs input {
+				font-size: 0.875rem;
+				width: 150px;
+				height: 32px;
+				background: rgba(255, 255, 255, 0.2);
+				border: 1px solid black;
+			}
+
+			tr:hover {
+				background-color: cornflowerblue;
+				transition: all 0.8s ease;
+			}
+
+			.v-enter,
+			.v-leave-to {
+				opacity: 0;
+				transform: translateY(80px);
+			}
+
+			.v-enter-active,
+			.v-leave-active {
+				transition: all 0.6s ease;
+			}
+
+			.v-move {
+				transition: all 0.6s ease;
+			}
+
+			.v-leave-active {
+				position: absolute;
+			}
+
+			.tables {
+				text-align: center;
+				width: 100%;
+				margin: 20px auto;
+			}
+
+			.tr {
+				width: 100%;
+				height: 40px;
+				line-height: 40px;
+			}
+
+			.tr:nth-child(even) {
+				background-color: #55ffff;
+			}
+
+			.firstTr {
+				background-color: #38a8a8 !important;
+			}
+
+			.td {
+				box-sizing: border-box;
+				border: 1px solid black;
+				width: 20%;
+				height: 40px;
+				float: left;
+			}
+
+			a {
+				text-decoration: none;
+				color: red;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<div id="add" align="center" class="inputs">
+				<label>产品编号</label>
+				<input type="text" name="" id="" value="" v-model="id" />
+				<label>产品名称</label>
+				<input type="text" name="" id="" value="" v-model="name" />
+				<label>产品库存</label>
+				<input type="text" name="" id="" value="" v-model="number" />
+				<button @click="add">添加</button>
+				<label>搜索产品名称</label>
+				<input type="text" name="" id="" value="" v-model="sname" />
+				<a href="userList.html" style="color: darkcyan;text-decoration: underline;">用户中心</a>
+			</div>
+			<div class="tables">
+				<div class="tr firstTr">
+					<div class="td">产品编号</div>
+					<div class="td">产品名称</div>
+					<div class="td">产品数量</div>
+					<div class="td">入库时间</div>
+					<div class="td">操作</div>
+				</div>
+				<transition-group appear>
+					<div v-for="item in search(sname)" :key="item.id" class="tr">
+						<div class="td">{{item.id}}</div>
+						<div class="td" v-text="item.name"></div>
+						<div class="td">{{item.number}}</div>
+						<div class="td">{{item.time|dateFormat}}</div>
+						<div class="td"><a href="" @click.prevent="del(item.id)">删除</a></div>
+					</div>
+				</transition-group>
+			</div>
+		</div>
+		<script type="text/javascript">
+			Vue.filter('dateFormat', function() {
+				let date = new Date()
+				let y = date.getFullYear()
+				let m = date.getMonth() + 1
+				let d = date.getDate()
+				let hh = date.getHours()
+				let mm = date.getMinutes()
+				let ss = date.getSeconds()
+				return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
+			})
+
+			let vm = new Vue({
+				el: '#app',
+				data: {
+					id: '',
+					name: '',
+					time: '',
+					keywords: '',
+					sname: '',
+					number: '',
+					list: [{
+							id: 1,
+							name: '苹果',
+							number: 100
+						},
+						{
+							id: 2,
+							name: '梨',
+							number: 50
+						},
+						{
+							id: 3,
+							name: '葡萄',
+							number: 20
+						}
+					]
+				},
+				methods: {
+					add() {
+						let people = {
+							id: this.id,
+							name: this.name,
+							time: this.time,
+							number: this.number
+						}
+						this.list.push(people)
+					},
+					del(id) {
+						this.list.some((item, i) => {
+							if (item.id == id) {
+								this.list.splice(i, 1)
+								return true;
+							}
+						})
+					},
+					search(sname) {
+						let newList = []
+						this.list.forEach(item => {
+							if (item.name.indexOf(sname) != -1) {
+								newList.push(item)
+							}
+						})
+						return newList;
+					}
+				}
+			})
+		</script>
+	</body>
+</html>
